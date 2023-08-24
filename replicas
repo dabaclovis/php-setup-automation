@@ -1,0 +1,37 @@
+  apiVersion: apps/v1
+    kind: ReplicaSet
+    metadata:
+      name: etech-rc-app-replicaset 
+      namespace: link
+      labels:
+        app: etech-rc-app
+        type: front-end
+    spec:
+     template:
+        metadata:
+          name: etech-rc-app
+          labels:
+            app: etech-rc-app
+            type: front-end
+        spec:
+         containers:
+         - name: nginx-container
+           image: nginx
+     replicas: 3
+     selector:
+       matchLabels:
+        type: front-end
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etech-rs-service 
+  namespace: link
+spec:
+  type: NodePort
+  selector:
+    app: etech-rc-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
