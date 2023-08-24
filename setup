@@ -1,0 +1,56 @@
+curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
+sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+composer
+
+echo "composer is +++++++++++++++++ installed --"
+
+cd ~
+mkdir application 
+cd application
+composer create-project --prefer-dist laravel/laravel .
+composer req laravelcollective/html 
+composer req livewire/livewire
+composer req laravel/ui
+php artisan ui bootstrap --auth
+php artisan make:controller PagesController 
+php artisan make:model Article -mfc
+php artisan make:model Form -mfc
+php artisan make:model country -mfc
+php artisan make:controller UserController -r
+cd resources/views
+mkdir dashboard pages forms articles country partials
+mv home.blade.php dashboard
+cd dashboard
+touch setting.blade.php profile.blade.php 
+cd ..
+cd pages
+touch index.blade.php about.blade.php policy.blade.php 
+cd ..
+cd articles
+touch index.blade.php create.blade.php show.blade.php edit.blade.php
+cd ..
+cd forms
+touch index.blade.php create.blade.php show.blade.php edit.blade.php
+cd ..
+cd partials
+touch navbar.blade.php footer.blade.php search.blade.php dropdown.blade.php
+cd ..
+cd ../..
+cd ~
+sudo touch /etc/nginx/sites-available/application
+sudo chown -R $USER:$USER /etc/nginx/sites-available/application
+cd ~
+cd setup
+cp -r application /etc/nginx/sites-available/application 
+cd ~
+sudo ln -s /etc/nginx/sites-available/application  /etc/nginx/sites-enabled/
+sudo unlink  etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl reload nginx
+cd ~
+
+sudo mv application /var/www/application 
+sudo chown -R $USER:$USER /var/www/application 
+sudo chown -R www-data:www-data /var/www/application/storage
+sudo chown -R www-data:www-data /var/www/application/bootstrap/cache
+sudo chmod ugo+x /var/www/application/storage
